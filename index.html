@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&family=Open+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  body{margin:0;background:#f0f3f6;-webkit-font-smoothing:antialiased}
+  *{box-sizing:border-box}
+  a{color:#1E7A46;text-decoration:none}
+  a:hover{color:#155C36;text-decoration:underline}
+  button,input,select,textarea{font:inherit;color:inherit}
+  @keyframes hspulse{0%,100%{opacity:.25;transform:translateY(0)}50%{opacity:1;transform:translateY(-3px)}}
+</style>
+</helmet>
+
+<div style="display:grid;grid-template-columns:246px minmax(0,1fr);min-height:100vh;max-width:1600px;margin:0 auto;background:#ffffff;font-family:'Open Sans',Helvetica,Arial,sans-serif;font-size:14px;line-height:1.55;color:#101b28">
+
+  <nav style="background:#182019;display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow:auto">
+    <div style="background:#ffffff;padding:16px 18px;display:flex;flex-direction:column;gap:8px">
+      <div style="font-family:'Montserrat',sans-serif;font-weight:700;font-size:26px;letter-spacing:.01em;color:#182019;line-height:1">HILLPHOENIX</div>
+      <div style="font-family:'Montserrat',sans-serif;font-size:15px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:#1E7A46">Case Assist</div>
+    </div>
+
+    <button onClick="{{ newInquiry }}" style="margin:14px 12px 4px;padding:10px;border-radius:6px;border:1px dashed rgba(255,255,255,.3);background:none;color:#ffffff;cursor:pointer;font-family:'Montserrat',sans-serif;font-size:15px;letter-spacing:.06em;text-transform:uppercase;font-weight:600" style-hover="background:rgba(255,255,255,.09)">+ New Inquiry</button>
+
+    <div style="padding:14px 12px 4px">
+      <h4 style="font-family:'Montserrat',sans-serif;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#8FA895;margin:0 0 8px 6px;font-weight:600">Workspace</h4>
+      <div style="display:flex;flex-direction:column;gap:2px">
+        <sc-for list="{{ navWork }}" as="n" hint-placeholder-count="4">
+          <button onClick="{{ n.go }}" style="display:flex;align-items:center;gap:10px;width:100%;padding:9px 10px;border:0;border-radius:6px;text-align:left;cursor:pointer;font-size:13.5px;color:#E4EDE6;background:{{ n.bg }};box-shadow:{{ n.mark }}">{{ n.label }}</button>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="padding:14px 12px 4px">
+      <h4 style="font-family:'Montserrat',sans-serif;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#8FA895;margin:0 0 8px 6px;font-weight:600">Administration</h4>
+      <div style="display:flex;flex-direction:column;gap:2px">
+        <sc-for list="{{ navAdmin }}" as="n" hint-placeholder-count="2">
+          <button onClick="{{ n.go }}" style="display:flex;align-items:center;gap:10px;width:100%;padding:9px 10px;border:0;border-radius:6px;text-align:left;cursor:pointer;font-size:13.5px;color:#E4EDE6;background:{{ n.bg }};box-shadow:{{ n.mark }}">{{ n.label }}</button>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="padding:16px 12px 4px">
+      <h4 style="font-family:'Montserrat',sans-serif;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#8FA895;margin:0 0 8px 6px;font-weight:600">Recent inquiries</h4>
+      <div style="display:flex;flex-direction:column;gap:2px">
+        <sc-for list="{{ history }}" as="h" hint-placeholder-count="3">
+          <button onClick="{{ h.open }}" style="display:block;width:100%;text-align:left;background:none;border:0;color:#CFE0D2;padding:7px 10px;border-radius:6px;cursor:pointer;font-size:12.5px;line-height:1.35" style-hover="background:rgba(255,255,255,.07)">{{ h.q }}<span style="display:block;color:#8FA895;font-size:10.5px;margin-top:2px;font-family:'IBM Plex Mono',monospace">{{ h.model }}</span></button>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="margin-top:auto;padding:14px 18px;border-top:1px solid rgba(255,255,255,.1);font-size:11px;color:#8FA895;line-height:1.5">Prototype · EAi Technologies<br>Content sourced from real, uploaded Hillphoenix/Tyler documents — answers are scripted for this demo, not live retrieval</div>
+  </nav>
+
+  <div style="display:flex;flex-direction:column;min-width:0">
+    <div id="topbar" style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:13px 24px;border-bottom:1px solid #dde5ee;background:#ffffff;position:sticky;top:0;z-index:6">
+      <div>
+        <h1 style="font-family:'Montserrat',sans-serif;font-size:21px;font-weight:600;margin:0;letter-spacing:.01em">{{ paneTitle }}</h1>
+        <div style="font-size:12px;color:#5d7086">{{ paneSub }}</div>
+      </div>
+      <div style="flex:1"></div>
+      <div style="display:flex;border:1px solid #dde5ee;border-radius:100px;overflow:hidden;background:#f3f6fa">
+        <sc-for list="{{ roles }}" as="r" hint-placeholder-count="4">
+          <button onClick="{{ r.pick }}" style="border:0;padding:7px 14px;cursor:pointer;font-size:12.5px;white-space:nowrap;background:{{ r.bg }};color:{{ r.fg }};font-weight:{{ r.fw }}">{{ r.label }}</button>
+        </sc-for>
+      </div>
+      <span style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;color:#8a5a00;background:#fdf4e3;border:1px solid #e8cfa0;padding:4px 9px;border-radius:100px">Prototype</span>
+    </div>
+    <div style="height:4px;display:flex"><i style="flex:1;background:#182019"></i><i style="flex:1;background:#155C36"></i><i style="flex:1;background:#1E7A46"></i><i style="flex:1;background:#37B06B"></i><i style="flex:1;background:#C98A2B"></i></div>
+
+    <sc-if value="{{ isChat }}" hint-placeholder-val="{{ true }}">
+      <div style="display:grid;grid-template-columns:{{ chatCols }}">
+        <div style="min-width:0;display:flex;flex-direction:column">
+          <sc-if value="{{ showFaqHero }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:22px 26px 8px;min-height:50vh;max-width:760px">
+              <h2 style="font-family:'Montserrat',sans-serif;font-size:25px;font-weight:700;margin:0 0 8px;letter-spacing:-.01em;text-wrap:balance">Ask about any Hillphoenix Case-line merchandiser</h2>
+              <p style="color:#3d4f61;font-size:14px;line-height:1.6;margin:0 0 4px;max-width:58ch">{{ roleNote }}</p>
+              <p style="font-size:12px;color:#5d7086;margin:0 0 22px">Fresh thinking, responsible solutions — answers come from the uploaded Hillphoenix documents only, cited to the page.</p>
+              <div style="display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(250px,1fr))">
+                <sc-for list="{{ chips }}" as="c" hint-placeholder-count="4">
+                  <button onClick="{{ c.ask }}" style="text-align:left;border:1px solid #dde5ee;background:#ffffff;border-radius:10px;padding:14px 16px;cursor:pointer" style-hover="border-color:#1E7A46">
+                    <b style="display:block;font-family:'Montserrat',sans-serif;font-size:13.5px;font-weight:600;color:#101b28">{{ c.t }}</b>
+                  </button>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ hasAsked }}">
+          <div style="padding:22px 26px 8px;min-height:50vh">
+            <sc-for list="{{ messages }}" as="m" hint-placeholder-count="2">
+              <div id="msg-{{ m.id }}" style="margin:0 0 20px;display:flex;flex-direction:column">
+
+                <sc-if value="{{ m.isUser }}">
+                  <div style="max-width:640px;align-self:flex-end">
+                    <div style="font-family:'Montserrat',sans-serif;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#5d7086;margin-bottom:6px;text-align:right">{{ m.who }}</div>
+                    <div style="background:#155C36;color:#ffffff;padding:11px 15px;border-radius:14px 14px 4px 14px">{{ m.text }}</div>
+                  </div>
+                </sc-if>
+
+                <sc-if value="{{ m.isThinking }}">
+                  <div style="max-width:800px">
+                    <div style="font-family:'Montserrat',sans-serif;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#5d7086;margin-bottom:6px">Hillphoenix Assist</div>
+                    <div style="display:flex;gap:7px;align-items:center;color:#5d7086;font-size:13px">
+                      <i style="width:6px;height:6px;border-radius:50%;background:#1E7A46;animation:hspulse 1.1s infinite"></i>
+                      <i style="width:6px;height:6px;border-radius:50%;background:#1E7A46;animation:hspulse 1.1s infinite .15s"></i>
+                      <i style="width:6px;height:6px;border-radius:50%;background:#1E7A46;animation:hspulse 1.1s infinite .3s"></i>
+                      <span style="margin-left:4px">{{ m.text }}</span>
+                    </div>
+                  </div>
+                </sc-if>
+
+                <sc-if value="{{ m.isAnswer }}">
+                  <div style="max-width:800px">
+                    <div style="font-family:'Montserrat',sans-serif;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#5d7086;margin-bottom:6px;display:flex;gap:8px"><b style="color:#1E7A46;font-weight:600;letter-spacing:.16em">Hillphoenix Assist</b><span>{{ m.model }}</span></div>
+                    <div style="background:#ffffff;border:1px solid #dde5ee;border-radius:10px;box-shadow:0 1px 2px rgba(9,26,45,.06),0 10px 26px -16px rgba(9,26,45,.35);overflow:hidden">
+                      <div style="padding:16px 18px">
+                        <ul style="margin:0 0 12px;padding:0;list-style:none;font-size:12.5px;color:#5d7086;font-family:'IBM Plex Mono',monospace;display:flex;flex-direction:column;gap:3px">
+                          <sc-for list="{{ m.pipe }}" as="p" hint-placeholder-count="3">
+                            <li><span style="color:#11704a;font-weight:700">✓</span> {{ p.t }}</li>
+                          </sc-for>
+                        </ul>
+                        <h3 style="font-family:'Montserrat',sans-serif;font-size:20px;margin:0 0 8px;font-weight:600;text-wrap:balance">{{ m.title }}</h3>
+                        <p style="margin:0 0 10px;color:#3d4f61;text-wrap:pretty">{{ m.lede }}</p>
+                        <div style="border-left:3px solid #1E7A46;background:#E7F4EC;padding:10px 13px;border-radius:0 6px 6px 0;font-size:13px;margin:14px 0">
+                          <b style="font-family:'Montserrat',sans-serif;letter-spacing:.1em;text-transform:uppercase;font-size:11px;display:block;margin-bottom:2px">{{ m.roleTitle }}</b>{{ m.roleNote }}
+                        </div>
+
+                        <sc-if value="{{ m.hasSteps }}">
+                          <div>
+                            <h4 style="font-family:'Montserrat',sans-serif;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#5d7086;margin:18px 0 9px;font-weight:600">Procedure</h4>
+                            <ol style="list-style:none;margin:0;padding:0">
+                              <sc-for list="{{ m.steps }}" as="s" hint-placeholder-count="4">
+                                <li style="position:relative;padding:0 0 13px 36px">
+                                  <span style="position:absolute;left:0;top:1px;width:23px;height:23px;border-radius:50%;background:#E7F4EC;color:#155C36;font-family:'IBM Plex Mono',monospace;font-size:11px;display:grid;place-items:center;font-weight:500">{{ s.n }}</span>
+                                  <b style="display:block;font-weight:600">{{ s.t }}</b>
+                                  <em style="font-style:normal;color:#5d7086;font-size:13px;display:block;margin-top:2px;text-wrap:pretty">{{ s.d }}</em>
+                                </li>
+                              </sc-for>
+                            </ol>
+                          </div>
+                        </sc-if>
+
+                        <sc-if value="{{ m.hasKv }}">
+                          <div>
+                            <h4 style="font-family:'Montserrat',sans-serif;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#5d7086;margin:18px 0 9px;font-weight:600">Reference values</h4>
+                            <div style="display:grid;grid-template-columns:auto 1fr;gap:5px 16px;font-size:13px">
+                              <sc-for list="{{ m.kv }}" as="k" hint-placeholder-count="4">
+                                <div style="display:contents"><div style="color:#5d7086">{{ k.k }}</div><div style="font-family:'IBM Plex Mono',monospace;font-size:12.5px">{{ k.v }}</div></div>
+                              </sc-for>
+                            </div>
+                          </div>
+                        </sc-if>
+
+                        <sc-for list="{{ m.notes }}" as="nt" hint-placeholder-count="1">
+                          <div style="border-left:3px solid {{ nt.bd }};background:{{ nt.bg }};padding:10px 13px;border-radius:0 6px 6px 0;font-size:13px;margin:14px 0 0">
+                            <b style="font-family:'Montserrat',sans-serif;letter-spacing:.1em;text-transform:uppercase;font-size:11px;display:block;margin-bottom:2px">{{ nt.t }}</b>{{ nt.d }}
+                          </div>
+                        </sc-for>
+                      </div>
+
+                      <sc-if value="{{ m.hasImg }}">
+                        <div style="border-top:1px solid #e8eef5;padding:16px 18px;background:#f5f8fb;display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(230px,1fr))">
+                          <sc-for list="{{ m.imgs }}" as="g" hint-placeholder-count="2">
+                            <figure style="margin:0">
+                              <img src="{{ g.src }}" alt="{{ g.cap }}" style="width:100%;height:200px;object-fit:contain;display:block;background:#ffffff;border:1px solid #dde5ee;border-radius:6px;padding:8px" />
+                              <figcaption style="font-size:11.5px;color:#5d7086;margin-top:7px;font-family:'IBM Plex Mono',monospace;line-height:1.45;text-wrap:pretty">{{ g.cap }}</figcaption>
+                            </figure>
+                          </sc-for>
+                        </div>
+                      </sc-if>
+
+                      <sc-if value="{{ m.hasFig }}">
+                        <figure style="margin:0;border-top:1px solid #e8eef5;padding:16px 18px;background:#f5f8fb">
+                          <svg viewBox="0 0 700 250" role="img" aria-label="Refrigeration and defrost circuit" style="width:100%;height:auto;display:block;border:1px solid #dde5ee;border-radius:6px;background:#ffffff;font-family:'Open Sans',sans-serif">
+                            <rect x="18" y="30" width="200" height="150" rx="4" fill="#e6f4f7" stroke="#12869c"></rect>
+                            <text x="20" y="22" fill="#5d7086" font-size="9" letter-spacing="1.4" font-weight="600">EVAPORATOR SECTION</text>
+                            <path d="M40 64h156M40 82h156M40 100h156M40 118h156" stroke="#12869c" stroke-width="1.6" fill="none"></path>
+                            <circle cx="60" cy="152" r="13" fill="#ffffff" stroke="#dde5ee"></circle>
+                            <circle cx="118" cy="152" r="13" fill="#ffffff" stroke="#dde5ee"></circle>
+                            <circle cx="176" cy="152" r="13" fill="#ffffff" stroke="#dde5ee"></circle>
+                            <text x="112" y="196" fill="#101b28" font-size="11" text-anchor="middle">Coil + ECM fans</text>
+                            <circle cx="34" cy="48" r="9" fill="#E7F4EC" stroke="#155C36"></circle><text x="34" y="51.5" fill="#155C36" font-size="10" font-weight="700" text-anchor="middle">1</text>
+                            <circle cx="204" cy="48" r="9" fill="#E7F4EC" stroke="#155C36"></circle><text x="204" y="51.5" fill="#155C36" font-size="10" font-weight="700" text-anchor="middle">2</text>
+                            <circle cx="176" cy="178" r="9" fill="#E7F4EC" stroke="#155C36"></circle><text x="176" y="181.5" fill="#155C36" font-size="10" font-weight="700" text-anchor="middle">3</text>
+                            <rect x="262" y="52" width="120" height="60" rx="4" fill="#E7F4EC" stroke="#155C36"></rect>
+                            <text x="322" y="80" fill="#101b28" font-size="11.5" font-weight="600" text-anchor="middle">TXV</text>
+                            <text x="322" y="96" fill="#5d7086" font-size="9.5" text-anchor="middle">liquid feed</text>
+                            <circle cx="268" cy="58" r="9" fill="#E7F4EC" stroke="#155C36"></circle><text x="268" y="61.5" fill="#155C36" font-size="10" font-weight="700" text-anchor="middle">4</text>
+                            <rect x="262" y="140" width="120" height="76" rx="4" fill="#E7F4EC" stroke="#155C36"></rect>
+                            <text x="322" y="168" fill="#101b28" font-size="11.5" font-weight="600" text-anchor="middle">Onboard controller</text>
+                            <text x="322" y="184" fill="#5d7086" font-size="9.5" text-anchor="middle">case controller</text>
+                            <text x="322" y="199" fill="#5d7086" font-size="9.5" text-anchor="middle">defrost + fan logic</text>
+                            <circle cx="268" cy="146" r="9" fill="#E7F4EC" stroke="#155C36"></circle><text x="268" y="149.5" fill="#155C36" font-size="10" font-weight="700" text-anchor="middle">5</text>
+                            <rect x="430" y="52" width="120" height="60" rx="4" fill="#fdf4e3" stroke="#b7791f"></rect>
+                            <text x="490" y="76" fill="#101b28" font-size="11.5" font-weight="600" text-anchor="middle">Drain heater</text>
+                            <text x="490" y="92" fill="#5d7086" font-size="9.5" text-anchor="middle">120V, low temp only</text>
+                            <circle cx="436" cy="58" r="9" fill="#E7F4EC" stroke="#155C36"></circle><text x="436" y="61.5" fill="#155C36" font-size="10" font-weight="700" text-anchor="middle">6</text>
+                            <rect x="430" y="140" width="120" height="76" rx="4" fill="#ffffff" stroke="#dde5ee"></rect>
+                            <text x="490" y="168" fill="#101b28" font-size="11.5" font-weight="600" text-anchor="middle">Rack / condensing</text>
+                            <text x="490" y="184" fill="#5d7086" font-size="9.5" text-anchor="middle">suction + liquid</text>
+                            <text x="490" y="199" fill="#5d7086" font-size="9.5" text-anchor="middle">EPR controlled</text>
+                            <rect x="598" y="52" width="86" height="164" rx="4" fill="#ffffff" stroke="#dde5ee"></rect>
+                            <text x="641" y="80" fill="#101b28" font-size="11.5" font-weight="600" text-anchor="middle">Gauge</text>
+                            <text x="641" y="96" fill="#5d7086" font-size="9.5" text-anchor="middle">ports</text>
+                            <path d="M641 110v92" stroke="#5d7086" stroke-width="1.2" fill="none"></path>
+                            <circle cx="641" cy="130" r="6" fill="#E7F4EC" stroke="#155C36"></circle>
+                            <circle cx="641" cy="170" r="6" fill="#E7F4EC" stroke="#155C36"></circle>
+                            <text x="641" y="214" fill="#5d7086" font-size="9.5" text-anchor="middle">HP / LP</text>
+                            <path d="M218 82h36M382 82h40M382 178h40M218 152h36" stroke="#155C36" stroke-width="1.6" fill="none"></path>
+                            <path d="M550 178h48v-40" stroke="#5d7086" stroke-width="1.4" stroke-dasharray="4 3" fill="none"></path>
+                          </svg>
+                          <figcaption style="font-size:11.5px;color:#5d7086;margin-top:8px;font-family:'IBM Plex Mono',monospace">{{ m.figcap }}</figcaption>
+                        </figure>
+                      </sc-if>
+
+                      <div style="display:flex;flex-wrap:wrap;gap:8px;padding:12px 18px;border-top:1px solid #e8eef5;background:#f5f8fb">
+                        <sc-for list="{{ m.cites }}" as="c" hint-placeholder-count="2">
+                          <button onClick="{{ c.open }}" style="display:inline-flex;align-items:center;gap:7px;border:1px solid #dde5ee;background:#ffffff;border-radius:100px;padding:5px 11px;font-size:11.5px;cursor:pointer;color:#3d4f61" style-hover="border-color:#1E7A46;color:#1E7A46">{{ c.doc }}<code style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#5d7086">{{ c.ref }}</code></button>
+                        </sc-for>
+                      </div>
+                      <div style="display:flex;gap:8px;flex-wrap:wrap;padding:12px 18px;border-top:1px solid #e8eef5">
+                        <button onClick="{{ actSendPhone }}" style="border:1px solid #155C36;background:#155C36;color:#ffffff;border-radius:6px;padding:6px 12px;font-size:12.5px;cursor:pointer">Send to my phone</button>
+                        <button onClick="{{ actOrder }}" style="border:1px solid #dde5ee;background:#ffffff;border-radius:6px;padding:6px 12px;font-size:12.5px;cursor:pointer;color:#3d4f61" style-hover="border-color:#1E7A46;color:#1E7A46">Find at Parts Town</button>
+                        <button onClick="{{ actEscalate }}" style="border:1px solid #dde5ee;background:#ffffff;border-radius:6px;padding:6px 12px;font-size:12.5px;cursor:pointer;color:#3d4f61" style-hover="border-color:#1E7A46;color:#1E7A46">Escalate to Hillphoenix service</button>
+                        <button onClick="{{ actHelpful }}" style="border:1px solid #dde5ee;background:#ffffff;border-radius:6px;padding:6px 12px;font-size:12.5px;cursor:pointer;color:#3d4f61" style-hover="border-color:#1E7A46;color:#1E7A46">This helped</button>
+                      </div>
+                    </div>
+                  </div>
+                </sc-if>
+
+              </div>
+            </sc-for>
+          </div>
+          </sc-if>
+
+          <div style="position:sticky;bottom:0;background:#ffffff;border-top:1px solid #dde5ee;padding:13px 26px 18px;margin-top:auto">
+            <sc-if value="{{ hasAsked }}">
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:11px">
+              <sc-for list="{{ chips }}" as="c" hint-placeholder-count="4">
+                <button onClick="{{ c.ask }}" style="border:1px solid #dde5ee;background:#f3f6fa;border-radius:100px;padding:7px 13px;font-size:12.5px;cursor:pointer;color:#3d4f61;text-align:left" style-hover="border-color:#1E7A46;color:#1E7A46">{{ c.t }}</button>
+              </sc-for>
+            </div>
+            </sc-if>
+            <div style="display:flex;gap:10px;align-items:flex-end">
+              <textarea rows="1" placeholder="Describe the symptom, or paste a model / serial number…" value="{{ query }}" onChange="{{ onQuery }}" onKeyDown="{{ onKey }}" style="flex:1;resize:none;border:1px solid #dde5ee;border-radius:9px;padding:11px 13px;background:#f7f9fc;min-height:46px;max-height:150px;font-family:'Open Sans',sans-serif"></textarea>
+              <button onClick="{{ send }}" style="background:#155C36;color:#ffffff;border:0;border-radius:9px;padding:0 20px;height:46px;cursor:pointer;font-family:'Montserrat',sans-serif;font-size:16px;letter-spacing:.06em;text-transform:uppercase;font-weight:600">Ask</button>
+            </div>
+            <div style="font-size:11px;color:#5d7086;margin-top:9px">Answers come from Hillphoenix documentation and Hillphoenix-supplied components only. Anything outside that library is flagged, never guessed.</div>
+          </div>
+        </div>
+
+        <sc-if value="{{ hasAsked }}" hint-placeholder-val="{{ true }}">
+        <aside style="border-left:1px solid #dde5ee;background:#f5f8fb;padding:20px;display:flex;flex-direction:column;gap:18px">
+          <div>
+            <h4 style="font-family:'Montserrat',sans-serif;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#5d7086;margin:0 0 9px;font-weight:600">Equipment in context</h4>
+            <div style="background:#ffffff;border:1px solid #dde5ee;border-radius:9px;padding:14px">
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#5d7086;letter-spacing:.04em">NAMEPLATE MODEL</div>
+              <div style="font-family:'Montserrat',sans-serif;font-size:22px;font-weight:700;margin:1px 0 2px">{{ unit.model }}</div>
+              <div style="font-size:12.5px;color:#5d7086">{{ unit.family }}</div>
+              <div style="font-size:12.5px;color:#5d7086;margin-top:6px">{{ unit.line }}</div>
+              <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:11px">
+                <sc-for list="{{ unitTags }}" as="t" hint-placeholder-count="3">
+                  <span style="font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;font-weight:600;padding:3px 8px;border-radius:4px;background:#E7F4EC;color:#155C36">{{ t.t }}</span>
+                </sc-for>
+              </div>
+              <div style="margin-top:12px">
+                <sc-for list="{{ unitStats }}" as="s" hint-placeholder-count="4">
+                  <div style="display:flex;justify-content:space-between;align-items:baseline;padding:6px 0;border-bottom:1px dashed #e3eaf2"><span style="color:#5d7086;font-size:12.5px">{{ s.k }}</span><b style="font-family:'IBM Plex Mono',monospace;font-size:12.5px;font-weight:500">{{ s.v }}</b></div>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+          <div>
+            <h4 style="font-family:'Montserrat',sans-serif;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#5d7086;margin:0 0 9px;font-weight:600">Change equipment</h4>
+            <select onChange="{{ onUnit }}" value="{{ unitId }}" style="width:100%;border:1px solid #dde5ee;background:#ffffff;border-radius:6px;padding:9px 10px">
+              <sc-for list="{{ equipment }}" as="e" hint-placeholder-count="6">
+                <option value="{{ e.id }}">{{ e.optLabel }}</option>
+              </sc-for>
+            </select>
+          </div>
+          <div>
+            <h4 style="font-family:'Montserrat',sans-serif;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#5d7086;margin:0 0 9px;font-weight:600">Store / site</h4>
+            <select style="width:100%;border:1px solid #dde5ee;background:#ffffff;border-radius:6px;padding:9px 10px">
+              <option>Kroger #4127 — Dublin, OH</option>
+              <option>Publix #1188 — Lakeland, FL</option>
+              <option>H-E-B #572 — New Braunfels, TX</option>
+              <option>Wawa #8841 — Media, PA</option>
+            </select>
+          </div>
+          <div>
+            <h4 style="font-family:'Montserrat',sans-serif;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#5d7086;margin:0 0 9px;font-weight:600">Retrieval scope (uploaded documents)</h4>
+            <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed #e3eaf2"><span style="color:#5d7086;font-size:12.5px">Documents uploaded</span><b style="font-family:'IBM Plex Mono',monospace;font-size:12.5px;font-weight:500">6</b></div>
+            <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed #e3eaf2"><span style="color:#5d7086;font-size:12.5px">Pages indexed</span><b style="font-family:'IBM Plex Mono',monospace;font-size:12.5px;font-weight:500">140</b></div>
+            <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed #e3eaf2"><span style="color:#5d7086;font-size:12.5px">Legacy Tyler quick reference</span><b style="font-family:'IBM Plex Mono',monospace;font-size:12.5px;font-weight:500">Included</b></div>
+            <div style="display:flex;justify-content:space-between;padding:6px 0"><span style="color:#5d7086;font-size:12.5px">Baseline: 833 line call volume</span><b style="font-family:'IBM Plex Mono',monospace;font-size:12.5px;font-weight:500">Not yet published</b></div>
+          </div>
+          <div>
+            <h4 style="font-family:'Montserrat',sans-serif;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#5d7086;margin:0 0 9px;font-weight:600">This unit's open items</h4>
+            <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed #e3eaf2"><span style="color:#5d7086;font-size:12.5px"><i style="display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:7px;background:#b7791f"></i>Defrost termination drift</span><b style="font-family:'IBM Plex Mono',monospace;font-size:12.5px;font-weight:500">2d</b></div>
+            <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed #e3eaf2"><span style="color:#5d7086;font-size:12.5px"><i style="display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:7px;background:#11704a"></i>Coil cleaning logged</span><b style="font-family:'IBM Plex Mono',monospace;font-size:12.5px;font-weight:500">11d</b></div>
+            <div style="display:flex;justify-content:space-between;padding:6px 0"><span style="color:#5d7086;font-size:12.5px"><i style="display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:7px;background:#b3261e"></i>Door heater circuit fault</span><b style="font-family:'IBM Plex Mono',monospace;font-size:12.5px;font-weight:500">open</b></div>
+          </div>
+        </aside>
+        </sc-if>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isDoc }}">
+      <div style="padding:26px 30px 40px;max-width:1060px">
+        <div style="font-size:11.5px;color:#5d7086;font-family:'Open Sans',sans-serif;margin-bottom:14px">Products <span style="color:#c2ccd8">/</span> {{ dp.badge }} <span style="color:#c2ccd8">/</span> {{ unit.family }}</div>
+
+        <div style="display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap">
+          <div>
+            <h2 style="font-family:'Montserrat',sans-serif;font-size:32px;font-weight:700;margin:0;letter-spacing:-.01em;line-height:1.1">{{ unit.model }}</h2>
+            <div style="font-family:'Montserrat',sans-serif;font-size:17px;font-weight:500;color:#155C36;margin-top:4px">{{ dp.tagline }}</div>
+          </div>
+          <span style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:#ffffff;background:#C98A2B;padding:5px 10px;border-radius:3px;margin-top:6px">{{ dp.badge }}</span>
+        </div>
+
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin:16px 0 22px">
+          <sc-for list="{{ unitTags }}" as="t" hint-placeholder-count="3">
+            <span style="font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;font-weight:600;padding:4px 9px;border-radius:3px;background:#E7F4EC;color:#155C36">{{ t.t }}</span>
+          </sc-for>
+        </div>
+
+        <sc-if value="{{ hasDpPhoto }}">
+          <figure style="margin:0 0 24px;background:#f5f8fb;border:1px solid #dde5ee;border-radius:10px;padding:18px">
+            <img src="{{ dpPhoto }}" alt="{{ unit.model }}" style="width:100%;max-height:340px;object-fit:contain;display:block" />
+            <figcaption style="font-size:11.5px;color:#5d7086;margin-top:10px;font-family:'IBM Plex Mono',monospace">Figure from the Hillphoenix installation and operation manual for this model</figcaption>
+          </figure>
+        </sc-if>
+
+        <div style="display:grid;gap:22px;grid-template-columns:minmax(0,1.35fr) minmax(240px,.65fr);align-items:start">
+          <div>
+            <h3 style="font-family:'Montserrat',sans-serif;font-size:20px;font-weight:700;margin:0 0 8px">Product Details</h3>
+            <p style="margin:0;color:#3d4f61;font-size:14.5px;line-height:1.65;text-wrap:pretty">{{ dp.details }}</p>
+
+            <h4 style="font-family:'Montserrat',sans-serif;font-size:15.5px;font-weight:700;margin:26px 0 10px">Key Features</h4>
+            <ul style="margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px">
+              <sc-for list="{{ dpFeatures }}" as="f" hint-placeholder-count="5">
+                <li style="display:flex;gap:11px;align-items:flex-start;font-size:14px;color:#3d4f61"><i style="width:6px;height:6px;border-radius:1px;background:#1E7A46;flex:0 0 6px;margin-top:7px"></i><span style="text-wrap:pretty">{{ f.t }}</span></li>
+              </sc-for>
+            </ul>
+
+            <h4 style="font-family:'Montserrat',sans-serif;font-size:15.5px;font-weight:700;margin:26px 0 10px">Benefits</h4>
+            <ul style="margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px">
+              <sc-for list="{{ dpBenefits }}" as="b" hint-placeholder-count="4">
+                <li style="display:flex;gap:11px;align-items:flex-start;font-size:14px;color:#3d4f61"><i style="width:6px;height:6px;border-radius:1px;background:#C98A2B;flex:0 0 6px;margin-top:7px"></i><span style="text-wrap:pretty">{{ b.t }}</span></li>
+              </sc-for>
+            </ul>
+          </div>
+
+          <div style="background:#f5f8fb;border:1px solid #dde5ee;border-radius:9px;padding:16px 18px">
+            <h4 style="font-family:'Montserrat',sans-serif;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#5d7086;margin:0 0 12px;font-weight:700">Specification</h4>
+            <sc-for list="{{ unitStats }}" as="s" hint-placeholder-count="4">
+              <div style="display:flex;justify-content:space-between;align-items:baseline;padding:7px 0;border-bottom:1px dashed #e3eaf2"><span style="color:#5d7086;font-size:12.5px">{{ s.k }}</span><b style="font-family:'IBM Plex Mono',monospace;font-size:12.5px;font-weight:500">{{ s.v }}</b></div>
+            </sc-for>
+            <button onClick="{{ dpAsk }}" style="width:100%;margin-top:16px;background:#155C36;color:#ffffff;border:0;border-radius:5px;padding:11px;cursor:pointer;font-family:'Montserrat',sans-serif;font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;font-weight:700">Ask about this product</button>
+          </div>
+        </div>
+
+        <sc-if value="{{ hasDpGallery }}">
+          <div>
+            <div style="height:2px;background:#dde5ee;margin:32px 0 24px"></div>
+            <h3 style="font-family:'Montserrat',sans-serif;font-size:20px;font-weight:700;margin:0 0 14px">Figures from the manual</h3>
+            <div style="display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))">
+              <sc-for list="{{ dpGallery }}" as="g" hint-placeholder-count="4">
+                <figure style="margin:0">
+                  <img src="{{ g.src }}" alt="{{ g.cap }}" style="width:100%;height:180px;object-fit:contain;display:block;background:#ffffff;border:1px solid #dde5ee;border-radius:8px;padding:8px" />
+                  <figcaption style="font-size:11.5px;color:#5d7086;margin-top:7px;font-family:'IBM Plex Mono',monospace;line-height:1.45;text-wrap:pretty">{{ g.cap }}</figcaption>
+                </figure>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+
+        <div style="height:2px;background:#dde5ee;margin:32px 0 24px"></div>
+
+        <h3 style="font-family:'Montserrat',sans-serif;font-size:20px;font-weight:700;margin:0 0 14px">Downloadable Resources</h3>
+        <div style="display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(230px,1fr))">
+          <sc-for list="{{ dpResources }}" as="r" hint-placeholder-count="4">
+            <button onClick="{{ r.open }}" style="display:flex;gap:13px;align-items:center;background:#ffffff;border:1px solid #dde5ee;border-radius:8px;padding:14px;text-align:left;cursor:pointer" style-hover="border-color:#1E7A46">
+              <span style="flex:0 0 38px;height:46px;border:1.5px solid #155C36;border-radius:3px;position:relative;background:#E7F4EC"><i style="position:absolute;left:7px;right:7px;top:11px;height:2px;background:#155C36;opacity:.55"></i><i style="position:absolute;left:7px;right:7px;top:19px;height:2px;background:#155C36;opacity:.55"></i><i style="position:absolute;left:7px;right:14px;top:27px;height:2px;background:#155C36;opacity:.55"></i></span>
+              <span><b style="display:block;font-family:'Montserrat',sans-serif;font-size:13.5px;font-weight:600;line-height:1.3">{{ r.t }}</b><code style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#5d7086">{{ r.pn }}</code></span>
+            </button>
+          </sc-for>
+        </div>
+
+        <p style="font-size:11.5px;color:#5d7086;margin:22px 0 0;max-width:70ch">Prototype — document titles and part numbers above are drawn from the real uploaded manual. In the live build each card links to the actual PDF, and the assistant cites these same documents by page, as it does in this demo.</p>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isFleet }}">
+      <div style="padding:24px">
+        <h2 style="font-family:'Montserrat',sans-serif;font-size:24px;font-weight:600;margin:0 0 4px">Equipment Lookup</h2>
+        <p style="color:#5d7086;margin:0 0 18px;max-width:62ch;text-wrap:pretty">Scan the nameplate, type a model, or pick a line. The assistant resolves the model to its product family and loads only that family's documentation before answering.</p>
+        <input placeholder="Nameplate model, serial, or store asset tag (try: NLM, OWIZ, PT)" value="{{ fleetQ }}" onChange="{{ onFleetQ }}" style="width:100%;max-width:470px;border:1px solid #dde5ee;background:#ffffff;border-radius:6px;padding:10px 12px;margin-bottom:18px">
+        <div style="display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(250px,1fr))">
+          <sc-for list="{{ fleetList }}" as="e" hint-placeholder-count="6">
+            <button onClick="{{ e.pick }}" style="background:#ffffff;border:1px solid #dde5ee;border-radius:9px;padding:14px;text-align:left;cursor:pointer" style-hover="border-color:#1E7A46">
+              <div style="font-family:'Montserrat',sans-serif;font-size:18px;font-weight:600">{{ e.model }}</div>
+              <div style="font-size:12.5px;color:#5d7086">{{ e.family }}</div>
+              <div style="font-size:12.5px;color:#3d4f61;margin-top:7px">{{ e.line }}</div>
+              <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:10px">
+                <sc-for list="{{ e.tagList }}" as="t" hint-placeholder-count="3">
+                  <span style="font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;font-weight:600;padding:3px 8px;border-radius:4px;background:#E7F4EC;color:#155C36">{{ t.t }}</span>
+                </sc-for>
+              </div>
+              <div style="display:flex;justify-content:space-between;margin-top:11px;padding-top:9px;border-top:1px dashed #e3eaf2"><span style="color:#5d7086;font-size:12.5px">Primary doc</span><b style="font-family:'IBM Plex Mono',monospace;font-size:12.5px;font-weight:500">{{ e.doc }}</b></div>
+            </button>
+          </sc-for>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isLibrary }}">
+      <div style="padding:24px">
+        <h2 style="font-family:'Montserrat',sans-serif;font-size:24px;font-weight:600;margin:0 0 4px">Document Library</h2>
+        <p style="color:#5d7086;margin:0 0 18px;max-width:62ch;text-wrap:pretty">Installation &amp; operation manuals, service manuals, parts lists and component bulletins. New uploads are ingested, chunked and searchable in minutes — no reindexing window.</p>
+        <button onClick="{{ actUpload }}" style="width:100%;max-width:900px;border:2px dashed #cbd8e6;border-radius:10px;padding:28px;text-align:center;color:#5d7086;background:#ffffff;cursor:pointer;display:block" style-hover="border-color:#1E7A46;color:#1E7A46">
+          <b style="display:block;font-family:'Montserrat',sans-serif;font-size:17px;color:#101b28;letter-spacing:.02em">Upload manual, parts list, or service bulletin</b>
+          PDF only · auto-extraction of figures, tables and part numbers
+        </button>
+        <div style="height:18px"></div>
+        <div style="overflow-x:auto;border:1px solid #dde5ee;border-radius:9px;background:#ffffff;max-width:1000px">
+          <table style="border-collapse:collapse;width:100%;font-size:13px;min-width:600px">
+            <thead>
+              <tr>
+                <th style="font-family:'Montserrat',sans-serif;font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:#5d7086;text-align:left;padding:10px 14px;border-bottom:1px solid #dde5ee;font-weight:600">Document</th>
+                <th style="font-family:'Montserrat',sans-serif;font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:#5d7086;text-align:left;padding:10px 14px;border-bottom:1px solid #dde5ee;font-weight:600">Covers</th>
+                <th style="font-family:'Montserrat',sans-serif;font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:#5d7086;text-align:left;padding:10px 14px;border-bottom:1px solid #dde5ee;font-weight:600">P/N</th>
+                <th style="font-family:'Montserrat',sans-serif;font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:#5d7086;text-align:left;padding:10px 14px;border-bottom:1px solid #dde5ee;font-weight:600">Pages</th>
+                <th style="font-family:'Montserrat',sans-serif;font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:#5d7086;text-align:left;padding:10px 14px;border-bottom:1px solid #dde5ee;font-weight:600">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <sc-for list="{{ docs }}" as="d" hint-placeholder-count="6">
+                <tr>
+                  <td style="padding:10px 14px;border-bottom:1px solid #eef3f8">
+                    <span style="display:flex;gap:11px;align-items:center">
+                      <sc-if value="{{ d.hasThumb }}">
+                        <img src="{{ d.thumb }}" alt="" style="flex:0 0 46px;width:46px;height:52px;object-fit:contain;background:#f5f8fb;border:1px solid #dde5ee;border-radius:4px;padding:3px" />
+                      </sc-if>
+                      <span>{{ d.title }}</span>
+                    </span>
+                  </td>
+                  <td style="padding:10px 14px;border-bottom:1px solid #eef3f8;color:#5d7086">{{ d.covers }}</td>
+                  <td style="padding:10px 14px;border-bottom:1px solid #eef3f8;font-family:'IBM Plex Mono',monospace">{{ d.pn }}</td>
+                  <td style="padding:10px 14px;border-bottom:1px solid #eef3f8;font-family:'IBM Plex Mono',monospace">{{ d.pages }}</td>
+                  <td style="padding:10px 14px;border-bottom:1px solid #eef3f8"><span style="font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;font-weight:600;padding:3px 8px;border-radius:4px;background:{{ d.bg }};color:{{ d.fg }}">{{ d.status }}</span></td>
+                </tr>
+              </sc-for>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isParts }}">
+      <div style="padding:24px">
+        <h2 style="font-family:'Montserrat',sans-serif;font-size:24px;font-weight:600;margin:0 0 4px">Parts &amp; Diagrams</h2>
+        <p style="color:#5d7086;margin:0 0 18px;max-width:62ch;text-wrap:pretty">Every answer that names a part links straight to the component figure and the Hillphoenix part number. Hillphoenix doesn't run its own parts storefront today — ordering routes out to Parts Town or Parts One Store, so the tech leaves with the right number instead of guessing at a distributor search box.</p>
+        <div style="background:#ffffff;border:1px solid #dde5ee;border-radius:10px;max-width:760px;overflow:hidden">
+          <div style="padding:16px 18px">
+            <h3 style="font-family:'Montserrat',sans-serif;font-size:18px;margin:0 0 6px;font-weight:600">NLM / NLF / NLD — Operational Parts</h3>
+            <p style="color:#5d7086;margin:0">Part numbers below come straight from the Operational Parts List in the real NLM Installation &amp; Service Manual (9043540 Rev. B, p. 29). Where domestic and export circuits differ, both are shown.</p>
+          </div>
+          <div style="display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));padding:0 18px 16px">
+            <sc-for list="{{ partsFigs }}" as="g" hint-placeholder-count="2">
+              <figure style="margin:0">
+                <img src="{{ g.src }}" alt="{{ g.cap }}" style="width:100%;height:210px;object-fit:contain;display:block;background:#f5f8fb;border:1px solid #dde5ee;border-radius:8px;padding:8px" />
+                <figcaption style="font-size:11.5px;color:#5d7086;margin-top:7px;font-family:'IBM Plex Mono',monospace;line-height:1.45;text-wrap:pretty">{{ g.cap }}</figcaption>
+              </figure>
+            </sc-for>
+          </div>
+          <div style="overflow-x:auto;border-top:1px solid #eef3f8">
+            <table style="border-collapse:collapse;width:100%;font-size:13px;min-width:560px">
+              <thead>
+                <tr>
+                  <th style="font-family:'Montserrat',sans-serif;font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:#5d7086;text-align:left;padding:10px 14px;border-bottom:1px solid #dde5ee;font-weight:600">Ref</th>
+                  <th style="font-family:'Montserrat',sans-serif;font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:#5d7086;text-align:left;padding:10px 14px;border-bottom:1px solid #dde5ee;font-weight:600">Component</th>
+                  <th style="font-family:'Montserrat',sans-serif;font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:#5d7086;text-align:left;padding:10px 14px;border-bottom:1px solid #dde5ee;font-weight:600">Hillphoenix P/N</th>
+                  <th style="font-family:'Montserrat',sans-serif;font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:#5d7086;text-align:left;padding:10px 14px;border-bottom:1px solid #dde5ee;font-weight:600">Notes</th>
+                </tr>
+              </thead>
+              <tbody>
+                <sc-for list="{{ partsRows }}" as="p" hint-placeholder-count="6">
+                  <tr>
+                    <td style="padding:10px 14px;border-bottom:1px solid #eef3f8;font-family:'IBM Plex Mono',monospace">{{ p.ref }}</td>
+                    <td style="padding:10px 14px;border-bottom:1px solid #eef3f8">{{ p.name }}</td>
+                    <td style="padding:10px 14px;border-bottom:1px solid #eef3f8;font-family:'IBM Plex Mono',monospace">{{ p.pn }}</td>
+                    <td style="padding:10px 14px;border-bottom:1px solid #eef3f8;color:#5d7086">{{ p.note }}</td>
+                  </tr>
+                </sc-for>
+              </tbody>
+            </table>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;padding:13px 18px;border-top:1px solid #eef3f8">
+            <button onClick="{{ actOrder }}" style="border:1px solid #155C36;background:#155C36;color:#ffffff;border-radius:6px;padding:6px 12px;font-size:12.5px;cursor:pointer">Find at Parts Town</button>
+            <button onClick="{{ actStock }}" style="border:1px solid #dde5ee;background:#ffffff;border-radius:6px;padding:6px 12px;font-size:12.5px;cursor:pointer;color:#3d4f61" style-hover="border-color:#1E7A46;color:#1E7A46">Check Parts One Store</button>
+            <button onClick="{{ actExploded }}" style="border:1px solid #dde5ee;background:#ffffff;border-radius:6px;padding:6px 12px;font-size:12.5px;cursor:pointer;color:#3d4f61" style-hover="border-color:#1E7A46;color:#1E7A46">Open component figure</button>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isAgent }}">
+      <div style="padding:24px">
+        <h2 style="font-family:'Montserrat',sans-serif;font-size:24px;font-weight:600;margin:0 0 4px">Agent Management</h2>
+        <p style="color:#5d7086;margin:0 0 20px;max-width:62ch;text-wrap:pretty">How a question becomes a trusted answer. Retrieval is fenced to the resolved product family, and the guardrail step is what keeps the assistant from inventing a procedure.</p>
+        <div style="display:grid;gap:10px;max-width:900px;margin-bottom:24px">
+          <sc-for list="{{ pipeline }}" as="s" hint-placeholder-count="5">
+            <div style="display:flex;gap:14px;align-items:flex-start;background:#ffffff;border:1px solid #dde5ee;border-left:4px solid {{ s.accent }};border-radius:8px;padding:14px 16px">
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#155C36;background:#E7F4EC;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;flex:0 0 26px;font-weight:500">{{ s.n }}</div>
+              <div>
+                <b style="font-family:'Montserrat',sans-serif;font-size:16px;letter-spacing:.01em">{{ s.t }}</b>
+                <div style="color:#5d7086;font-size:13px;margin-top:2px;text-wrap:pretty">{{ s.d }}</div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));max-width:1000px">
+          <div style="background:#ffffff;border:1px solid #dde5ee;border-radius:10px;padding:16px 18px">
+            <h3 style="font-family:'Montserrat',sans-serif;font-size:18px;margin:0 0 10px;font-weight:600">Guardrails</h3>
+            <sc-for list="{{ guardrails }}" as="g" hint-placeholder-count="4">
+              <label style="display:flex;align-items:flex-start;gap:11px;padding:11px 0;border-bottom:1px solid #eef3f8">
+                <input type="checkbox" checked="{{ g.on }}" onChange="{{ g.toggle }}" style="margin-top:4px;accent-color:#155C36;width:16px;height:16px">
+                <span><b style="display:block;font-weight:600">{{ g.t }}</b><em style="font-style:normal;color:#5d7086;font-size:12.5px">{{ g.d }}</em></span>
+              </label>
+            </sc-for>
+          </div>
+          <div style="background:#ffffff;border:1px solid #dde5ee;border-radius:10px;padding:16px 18px">
+            <h3 style="font-family:'Montserrat',sans-serif;font-size:18px;margin:0 0 10px;font-weight:600">Model routing &amp; performance</h3>
+            <sc-for list="{{ routing }}" as="r" hint-placeholder-count="6">
+              <div style="display:flex;justify-content:space-between;align-items:baseline;padding:7px 0;border-bottom:1px dashed #e3eaf2"><span style="color:#5d7086;font-size:12.5px">{{ r.k }}</span><b style="font-family:'IBM Plex Mono',monospace;font-size:12.5px;font-weight:500">{{ r.v }}</b></div>
+            </sc-for>
+            <h4 style="font-family:'Montserrat',sans-serif;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#5d7086;margin:18px 0 6px;font-weight:600">Escalation</h4>
+            <p style="margin:0;color:#5d7086;font-size:13px;text-wrap:pretty">Unanswerable inquiries route to Hillphoenix Technical Services — 833-280-5714 and the Case email queue — with the full transcript, the resolved model, and the documents already checked attached, instead of the one phone number and four inboxes a tech works through today.</p>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isUsers }}">
+      <div style="padding:24px">
+        <h2 style="font-family:'Montserrat',sans-serif;font-size:24px;font-weight:600;margin:0 0 4px">User Access</h2>
+        <p style="color:#5d7086;margin:0 0 18px;max-width:62ch;text-wrap:pretty">One assistant, four audiences. Access level controls which documents are reachable and how much procedural depth an answer carries.</p>
+        <div style="overflow-x:auto;border:1px solid #dde5ee;border-radius:9px;background:#ffffff;max-width:1000px">
+          <table style="border-collapse:collapse;width:100%;font-size:13px;min-width:640px">
+            <thead>
+              <tr>
+                <th style="font-family:'Montserrat',sans-serif;font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:#5d7086;text-align:left;padding:10px 14px;border-bottom:1px solid #dde5ee;font-weight:600">User</th>
+                <th style="font-family:'Montserrat',sans-serif;font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:#5d7086;text-align:left;padding:10px 14px;border-bottom:1px solid #dde5ee;font-weight:600">Organization</th>
+                <th style="font-family:'Montserrat',sans-serif;font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:#5d7086;text-align:left;padding:10px 14px;border-bottom:1px solid #dde5ee;font-weight:600">Role</th>
+                <th style="font-family:'Montserrat',sans-serif;font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:#5d7086;text-align:left;padding:10px 14px;border-bottom:1px solid #dde5ee;font-weight:600">Document scope</th>
+                <th style="font-family:'Montserrat',sans-serif;font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:#5d7086;text-align:left;padding:10px 14px;border-bottom:1px solid #dde5ee;font-weight:600">Last active</th>
+              </tr>
+            </thead>
+            <tbody>
+              <sc-for list="{{ users }}" as="u" hint-placeholder-count="5">
+                <tr>
+                  <td style="padding:10px 14px;border-bottom:1px solid #eef3f8">{{ u.name }}</td>
+                  <td style="padding:10px 14px;border-bottom:1px solid #eef3f8;color:#5d7086">{{ u.org }}</td>
+                  <td style="padding:10px 14px;border-bottom:1px solid #eef3f8">{{ u.role }}</td>
+                  <td style="padding:10px 14px;border-bottom:1px solid #eef3f8;color:#5d7086">{{ u.scope }}</td>
+                  <td style="padding:10px 14px;border-bottom:1px solid #eef3f8;font-family:'IBM Plex Mono',monospace">{{ u.last }}</td>
+                </tr>
+              </sc-for>
+            </tbody>
+          </table>
+        </div>
+        <div style="height:16px"></div>
+        <div style="display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));max-width:1000px">
+          <button onClick="{{ actInvite }}" style="background:#ffffff;border:1px solid #dde5ee;border-radius:9px;padding:14px;text-align:left;cursor:pointer" style-hover="border-color:#1E7A46"><div style="font-family:'Montserrat',sans-serif;font-size:17px;font-weight:600">Invite user</div><div style="font-size:12.5px;color:#5d7086">Email invite scoped to a role</div></button>
+          <button onClick="{{ actSso }}" style="background:#ffffff;border:1px solid #dde5ee;border-radius:9px;padding:14px;text-align:left;cursor:pointer" style-hover="border-color:#1E7A46"><div style="font-family:'Montserrat',sans-serif;font-size:17px;font-weight:600">SSO mapping</div><div style="font-size:12.5px;color:#5d7086">Map retailer IdP groups to roles</div></button>
+          <button onClick="{{ actExport }}" style="background:#ffffff;border:1px solid #dde5ee;border-radius:9px;padding:14px;text-align:left;cursor:pointer" style-hover="border-color:#1E7A46"><div style="font-family:'Montserrat',sans-serif;font-size:17px;font-weight:600">Usage export</div><div style="font-size:12.5px;color:#5d7086">Questions asked, documentation gaps found</div></button>
+        </div>
+      </div>
+    </sc-if>
+  </div>
+</div>
+
+<sc-if value="{{ hasToast }}">
+  <div style="position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:#182019;color:#ffffff;padding:11px 18px;border-radius:100px;font-size:13px;z-index:40;font-family:'Open Sans',sans-serif;box-shadow:0 10px 30px -12px rgba(9,26,45,.6)">{{ toast }}</div>
+</sc-if>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;defaultRole&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;install&quot;,&quot;service&quot;,&quot;store&quot;,&quot;customer&quot;],&quot;default&quot;:&quot;service&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Behavior&quot;}}">
+const EQUIP = [
+  {id:"nlm",model:"NLM",family:"Lift-Front Curved Glass Meat/Seafood/Deli Service Merchandisers (NLM/NLF/NLD)",temp:"Medium temp",ref:"Not stated — see unit nameplate",ctrl:"Electronic thermostat (P/N 5997588)",doc:"9043540 Rev. B",line:"6'/8'/12' lift curved-glass gravity-coil meat service case — shares its platform with the NLF seafood case and NLD forced-air deli case",tags:["Service Case","Lift Glass","Legacy Tyler"]},
+  {id:"llh",model:"LLH",family:"Lift-Front Curved Glass Hot Food/Deli Merchandisers",temp:"Hot (heated, not refrigerated)",ref:"N/A — heated case, no refrigerant",ctrl:"Rheostat-type manual switch",doc:"9027531 Rev. C",line:"4'/6'/8'/12' lift curved-glass hot food / deli steam-table merchandiser",tags:["Hot Food","Lift Glass","Legacy Tyler"]},
+  {id:"owiz",model:"OWIZ",family:"Single-Deck Island Merchandisers (OWIZ/OWEZ)",temp:"Frozen Food / Ice Cream / Medium Temp",ref:"R-744 (CO₂) or glycol secondary systems supported",ctrl:"CPC or Danfoss (per wiring diagram)",doc:"P080658A V1.07",line:"8'/12' open island merchandiser, sliding-door option",tags:["Island","Open Front","CO₂/Glycol"]},
+  {id:"owez",model:"OWEZ",family:"Single-Deck Island Merchandisers (OWIZ/OWEZ)",temp:"Frozen Food / Ice Cream / Medium Temp",ref:"R-744 (CO₂) or glycol secondary systems supported",ctrl:"CPC or Danfoss (per wiring diagram)",doc:"P080658A V1.07",line:"8'/12' island merchandiser, solid or glass front, sliding doors optional",tags:["Island","Glass/Solid Front","CO₂/Glycol"]},
+  {id:"pt",model:"PT",family:"Self-Service Open Multi-Deck Merchandiser w/ Food Prep",temp:"Medium temp (DX or Parallel)",ref:"Not stated in tech reference sheet",ctrl:"Not stated in tech reference sheet",doc:"PT/PT-RRS Tech Reference Sheet, 10/17",line:"39.5\" tall × 35\" deep remote case, 4'/6'/8'/10'/12'; PT-RRS variant adds Refrigerated Rear Storage (35\"/53\" deep)",tags:["Open Front","Multi-Deck","Remote"]}
+];
+
+const DOCS = [
+  ["General Installation & Service Manual (UL/NSF)","All legacy Tyler case models — used with the case-specific manual","9043544 Rev. C.1",33,"Indexed"],
+  ["NLM, NLF, NLD — Lift Front Curved Glass Meat/Seafood/Deli Service Merchandisers — Installation & Service Manual","NLM / NLF / NLD","9043540 Rev. B",31,"Indexed"],
+  ["LLH — Lift Front Curved Glass Hot Food/Deli Merchandisers — Installation & Service Manual","LLH","9027531 Rev. C",28,"Indexed"],
+  ["OWIZ/OWEZ/OWIZV/OWEZV Single-Deck Island Merchandiser — Installation & Operations Manual","OWIZ / OWEZ / OWIZV / OWEZV","P080658A V1.07",44,"Indexed"],
+  ["PT / PT-RRS Self-Service Open Multi-Deck Merchandiser — Technical Reference Sheet","PT / PT-RRS","PT-Tech-Ref 10/17",3,"Indexed"],
+  ["NLM Lift Curved Glass — Meat Service Merchandiser (Legacy Tyler Quick Reference)","NLM","TY856",1,"Indexed"]
+];
+
+const CHIPS = {
+  install:["Case line-up and floor prep for a new island run","Setting superheat on the expansion valve","Seismic bracket installation for an island case","Lift glass leveling for a new NLM install"],
+  service:["Lift glass won't close properly","Lift glass hinge replacement","Defrost isn't terminating on an OWIZ case","Refrigeration line sizing for a case run"],
+  store:["How often should this case be cleaned?","Can I use a pressure washer on this case?","Rear sliding doors won't stay in the track","Does this case run on CO₂ or glycol?"],
+  customer:["How do I load a scale shelf?","What's the difference between NLM, NLF and NLD?","Can I use bleach to clean the case?","Lighted shelf got wet during cleaning — is that a problem?"]
+};
+
+const ROLE_LABEL = {install:"Installer", service:"Service Tech", store:"Store Engineer", customer:"Customer"};
+const ROLE_FRAME = {
+  install:["For the installer","Full commissioning depth, with the sign-off items called out."],
+  service:["For the service technician","Diagnostic order of operations, part numbers and set points included."],
+  store:["For the store engineer","What to check yourself, and the point where it becomes a service call."],
+  customer:["For store staff","Operation and care only. Anything behind a panel goes to Hillphoenix service."]
+};
+const TONE = {info:{bg:"#E7F4EC",bd:"#1E7A46"}, warn:{bg:"#fdf4e3",bd:"#b7791f"}, stop:{bg:"#fdeceb",bd:"#b3261e"}};
+
+const ANSWERS = [
+{id:"liftglass",kw:["lift glass","won't close","wont close","glass won't seal","glass wont seal","door won't close","glass leveling","level the glass","front glass","glass won't seat"],
+ title:"Lift front glass won't close or seal properly",
+ lede:"On the lift-glass service cases (NLM/NLF/NLD and LLH), a glass that won't close correctly is almost always a leveling problem, not a glass or hinge defect.",
+ pipe:["Resolved lift-glass service case family","Matched leveling procedure in the Installation & Service Manual"],
+ steps:[["Level the case, not just the glass","Use a 4-ft level across the top of the case near the hinge, AND on the color band. Both must be level — the glass will not seal correctly if either reading is off."],
+  ["Adjust at the corner legs","If the glass doesn't close properly after leveling, adjust the legs at the corners of the case rather than forcing the glass."],
+  ["Don't anchor the case yet","Do not anchor the case to the floor until the lift glass fits and works correctly — you may still need to re-level."],
+  ["Remove the hinge stops once it's right","The hinge stops (2 on a 4' glass, 3 on a 6' glass) are removed from the hex-head bolt shanks once the glass is confirmed level and sealing."]],
+ kv:[["Level tool","4-ft level"],["Check points","Top near hinge AND color band"],["Hinge stops","2 (4' glass) / 3 (6' glass)"]],
+ notes:[["stop","Raised glass is a hazard","The raised front glass projects in front of the case and can cause injury to workers, operators or customers. Don't remove the orange warning tags from the front edge of the lift glass, and never leave it raised and unattended."],
+  ["warn","Uneven floor risk","If the base of the case isn't sitting evenly on the floor, the case can warp when loaded and possibly break the lift glass."]],
+ cites:[["NLM, NLF, NLD Installation & Service Manual","9043540 Rev. B · p. 6–8"],["LLH Installation & Service Manual","9027531 Rev. C · p. 6"]]},
+
+{id:"hingereplace",kw:["hinge","hinge replacement","glass hinge","stiff hinge","replace the hinge","hinge stuck"],
+ title:"Lift glass hinge replacement",
+ lede:"Same hardware and procedure on NLM/NLF/NLD and LLH — the torque spec for the glass frame clamp setscrews is the one number that differs between the two manuals, so confirm which case you're on before torquing.",
+ pipe:["Resolved lift-glass service case","Matched hinge replacement procedure"],
+ steps:[["Remove the lift glass first","Pull down the glass frame clamp at the hinges, then remove the screws holding the glass in place."],
+  ["Mark the defective hinge","Note its position before removing anything else."],
+  ["Remove the stainless steel top","Take out its screws and lift it out to expose the hinge mounting."],
+  ["Remove the hinge","Four screws hold the hinge to the case top."],
+  ["Install the new hinge","Position it and secure with 4 screws, torqued to 125 lb-in."],
+  ["Reinstall the stainless top and glass","Tuck the stainless top back under the \"T\" rail, then reinstall the lift glass and torque the hinge screws to 60 lb-in."]],
+ kv:[["Hinge mounting screws","125 lb-in"],["Hinge screws (glass reinstall)","60 lb-in"],["Glass frame clamp setscrews — NLM/NLF/NLD","145 lb-in"],["Glass frame clamp setscrews — LLH","150 lb-in"]],
+ notes:[["stop","Do not take the hinge apart","The glass assembly is extremely heavy and could fall without proper support — breakage and injury can result."],
+  ["warn","Two people, safety glasses and gloves","Glass is heavy with uneven weight distribution. Mishandling can cause breakage or injury."]],
+ cites:[["NLM, NLF, NLD Installation & Service Manual","9043540 Rev. B · p. 26–27"],["LLH Installation & Service Manual","9027531 Rev. C · p. 22–23"]]},
+
+{id:"cleaning",kw:["clean","cleaning","sanitize","sanitizing","pressure washer","high pressure","bleach","how often should"],
+ title:"Cleaning and sanitizing schedule",
+ lede:"Frequency depends on the product category, and one piece of equipment is explicitly off-limits on the lift-glass service cases.",
+ pipe:["Resolved case category","Matched cleaning guidance in the General Installation & Service Manual"],
+ steps:[["Shut down first","Turn off refrigeration and electrical power, remove product, and remove trays/screens/pans/ducts to clean separately."],
+  ["Clear loose debris before flushing water","This avoids clogging the waste outlet."],
+  ["Wash and sanitize","Warm water plus a germicidal detergent, then sanitize with a Quaternary Ammonium Solution (e.g. KAYQUAT II, J-512 Sanitizer, SANIQUAT 512) per 21 CFR 178.1010."],
+  ["Reinstall and restart","Replace parts, restore power, and let the case reach temperature before restocking."]],
+ kv:[["Meat / produce cases","Clean at least weekly"],["Dairy cases","Every 2–4 weeks"],["Frozen food cases","Every 2–6 months"],["High-pressure equipment (General manual)","≤ 500 psi, water < 160°F"]],
+ notes:[["stop","No pressure washers on lift-glass service cases","Tyler explicitly does not recommend high-pressure cleaning equipment on NLM/NLF/NLD/LLH service-style cases — the front glass and end-joint seals can be penetrated or damaged."],
+  ["warn","Bleach voids the warranty","Liquid chlorine bleach or bleach-containing products are corrosive to metal surfaces and will void the case warranty."],
+  ["warn","Never soak lighted shelves","Water will short or damage the shelf lighting system. Never turn case power back on until all components are dry."],
+  ["info","Glass care","Don't use hot water on cold glass — it can cause the glass to shatter."]],
+ cites:[["General Installation & Service Manual","9043544 Rev. C.1 · p. G-23–26"],["NLM, NLF, NLD Installation & Service Manual","9043540 Rev. B · p. 20"]]},
+
+{id:"superheat",kw:["superheat","expansion valve","txv","sporlan","alco","turns","adjust the valve"],
+ title:"Setting superheat on the expansion valve",
+ lede:"The General manual's 7-step procedure applies broadly; the island cases (OWIZ/OWEZ) use the same principle referenced against a Sporlan pressure-temperature chart.",
+ pipe:["Resolved refrigeration circuit","Matched superheat-setting procedure"],
+ steps:[["Tighten all expansion valve connections first",""],
+  ["If there are two valves, starve the front coil valve first","Turn it in about 1.5 turns; the rear coil valve is adjusted first."],
+  ["Read suction pressure at the Schrader fitting","Take the reading at the coil output."],
+  ["Convert pressure to temperature","Use the pressure-temperature conversion chart for the refrigerant in the system (Sporlan chart, Appendix F on the island-case manual)."],
+  ["Read suction line temperature","Take it near the expansion valve bulb."],
+  ["Subtract to get superheat","Suction line temperature minus the converted saturation temperature = superheat. Adjust and repeat for the second valve if present."]],
+ kv:[["Sporlan valve adjustment","9–10 turns"],["Alco valve adjustment","10–12 turns"],["Adjustment increment","1/4–1/2 turn, then wait 15 minutes"],["Typical target range","6–12°F (4–6°F on high-performance cases)"]],
+ notes:[["warn","Don't force it","Forcing the adjustment beyond the stops will damage the valve."]],
+ cites:[["General Installation & Service Manual","9043544 Rev. C.1 · p. G-17–18"],["OWIZ/OWEZ/OWIZV/OWEZV Installation & Operations Manual","P080658A V1.07 · p. 9, Appendix F"]]},
+
+{id:"defrost",kw:["defrost","not terminating","termination","klixon","defrost type","defrost cycle"],
+ title:"Defrost isn't terminating correctly",
+ lede:"Where to look depends on the defrost type and the case family — the termination sensor location and settings are different on the lift-glass service cases versus the OWIZ/OWEZ island line.",
+ pipe:["Resolved case family and defrost type","Matched defrost settings and sensor locations"],
+ steps:[["Identify the defrost type","Off-time (simple timed shutoff, no active heating), electric (heater deactivated by a defrost limit klixon), gas (evaporator as heat exchanger, termination klixon at the bypass check valve), or air (reversible PSC fans, klixon terminates at 42°F)."],
+  ["On NLM/NLF/NLD","Off-time defrost: NLM/NLF run 1 cycle/day for 110 minutes; NLD runs 1 cycle/day for 46 minutes."],
+  ["On OWIZ/OWEZ","Check the termination sensor location — behind the rear baffle, mounted to the coil (electric), or on the dump line on the coil side of the check/solenoid valve (hot gas). If the discharge air probe is used for termination, no other termination sensor is installed."],
+  ["Gas defrost klixon note","Most cases use a 55° or 60°F defrost termination klixon that reads as 70°F due to time lag — use a 70°F termination setting if you're fitting an electronic temperature sensor instead."]],
+ kv:[["NLM/NLF off-time defrost","1/day, 110 min"],["NLD off-time defrost","1/day, 46 min"],["Air defrost klixon","42°F terminate / 32°F"],["OWIZ frozen food, electric defrost","1/day, fail-safe 60 min, terminate 49°F"]],
+ notes:[["info","Log it first","Confirm which defrost type and sensor the case actually has before assuming a fault — the settings above are not interchangeable between case families."]],
+ cites:[["General Installation & Service Manual","9043544 Rev. C.1 · p. G-19–20"],["NLM, NLF, NLD Installation & Service Manual","9043540 Rev. B · p. 10–11"],["OWIZ/OWEZ/OWIZV/OWEZV Installation & Operations Manual","P080658A V1.07 · p. 9"]]},
+
+{id:"islandinstall",kw:["line-up","lineup","floor prep","seismic","island install","new install","install a case","case line-up"],
+ title:"OWIZ/OWEZ island line-up, trim-out and seismic bracket install",
+ lede:"The island cases go in with a floor-prep-and-shim sequence, then a case-to-case trim-out pass, then an optional seismic bracket kit.",
+ pipe:["Resolved OWIZ/OWEZ island installation","Matched installation sequence"],
+ steps:[["Floor prep","Confirm building dimensions with the GC, mark the floor with chalk lines or a laser transit at the outside edges of the case feet, then locate the highest point along the line as your leveling reference."],
+  ["Set the first case","Roll it into position (minimum 2\" gap from the wall), raise each end with a \"J\" bar to remove the caster assembly, then lower the basehorse onto shim packs. Check plumb on the shelf standard and level on the front sill."],
+  ["Add cases to the run","Remove shelves and loose items, apply foam tape gasket and butyl/silicone sealant to the case end, push cases together to a 6\" gap, remove the remaining casters, then push tight and lightly bolt through the provided holes — tighten evenly, don't overtighten."],
+  ["Trim out","Install master bumper joint trim, close bumper seams working outward from center, install top sill covers over case-to-case joints, seal joints with caulk plus acrylic tape, then install the front panel joint trim, \"J\" rail, kickplate and nose bumper."],
+  ["Seismic bracket (optional)","Option 1 uses an \"L\" bracket to the wall (multi-deck cases). Option 2 uses a base-frame constraint bracket, 2 per case, fastened with #10 self-tapping screws, with an alternate floor-anchor location at the back of the case."]],
+ kv:[["Minimum wall gap","2\""],["Case-to-case gap before final push","6\""],["Seismic bracket wall anchor","(1) 0.5\" or (2) 0.375\" anchors"],["Seismic base-frame heights supported","5\", 7\", 11\", 15\""]],
+ notes:[["warn","Hands and feet clear","Be certain your hands and feet are out of the way before lowering the case after removing the casters — failure to do so may result in serious injury."],
+  ["info","Brazing near the tank","If brazing is necessary, place wet rags around the area to avoid tank damage."]],
+ cites:[["OWIZ/OWEZ/OWIZV/OWEZV Installation & Operations Manual","P080658A V1.07 · p. 3–6, Appendix G"]]},
+
+{id:"linesizing",kw:["line sizing","liquid line","suction line","pipe size","header","branch line","refrigeration piping"],
+ title:"Refrigeration line sizing for a new case run",
+ lede:"The General manual gives worked examples for liquid and suction line sizing across a case run — the island cases (OWIZ/OWEZ) publish their own fixed suction/liquid line sizes per model.",
+ pipe:["Resolved refrigeration piping question","Matched line-sizing guidance"],
+ steps:[["Liquid line, worked example","A 25,000 BTUH load needs a 3/8\" line at 100 equivalent feet; at 150 equivalent feet, step up to 1/2\"."],
+  ["Header and branch sizing","Header along the cases: 7/8\". Line into each case: always 1/2\". Main liquid line: 5/8\" minimum, even with just one case. Gas defrost branch line: 3 ft max."],
+  ["Suction line sizing range","As small as 5/8\" on a service meat case, up to 1-3/8\" on a large multi-shelf case, depending on load."],
+  ["Slope and pressure drop","Horizontal suction line slope: 1/2\" per 10 ft toward the compressor. Keep pressure drop under 2 PSIG from the last case to the compressor on a remote run."],
+  ["OWIZ/OWEZ fixed sizes","OWIZ: suction 7/8\", liquid 3/8\". OWEZ: suction 7/8\", liquid 3/8\". (OWIZV liquid line is 1/2\" — confirm the exact model before sizing.)"]],
+ kv:[["Header (along cases)","7/8\""],["Case branch line","1/2\""],["Main liquid line minimum","5/8\""],["OWIZ/OWEZ suction line","7/8\""]],
+ notes:[["warn","Low-temp lines must be insulated","Low temperature suction lines and all liquid lines must be insulated wherever subcooling is used, to prevent line and product damage from freezing."]],
+ cites:[["General Installation & Service Manual","9043544 Rev. C.1 · p. G-3–4"],["OWIZ/OWEZ/OWIZV/OWEZV Installation & Operations Manual","P080658A V1.07 · Appendix A–D"]]},
+
+{id:"co2glycol",kw:["co2","co₂","r-744","glycol","natural refrigerant","dowfrost","secondary refrigerant"],
+ title:"Does this case support CO₂ or glycol refrigerant systems?",
+ lede:"OWIZ and OWEZ are explicitly documented for both — this isn't a retrofit, it's a supported configuration with its own installation notices.",
+ pipe:["Resolved OWIZ/OWEZ island merchandiser","Matched refrigerant system notices"],
+ steps:[["R-744 (CO2) systems","For refrigeration units using R-744 (CO2), pressure relief and pressure-regulating relief valves may need to be installed per the notice in the manual. The relief valve must never be defeated, capped or altered."],
+  ["Glycol secondary systems","For systems using glycol, install and service per the Hillphoenix Second Nature Medium Temperature Secondary Refrigeration Installation Manual. Hillphoenix uses and recommends Dow glycol-based coolants — DOWFROST and DOWFROST HD."],
+  ["Pressure-temperature reference","The Sporlan chart in Appendix F covers 134a, 404A, 507, 717 (ammonia) and 744 (CO2) — use the column for the refrigerant actually charged in the system you're working on, confirmed against the nameplate."]],
+ kv:[["CO2 refrigerant","R-744"],["Glycol brand referenced","Dow DOWFROST / DOWFROST HD"],["Related manual","Hillphoenix Second Nature Medium Temp Secondary Refrigeration Installation Manual"]],
+ notes:[["stop","Don't touch the relief valve","On CO2 systems, the pressure relief valve must not be defeated, capped, or altered by any means."],
+  ["info","Not a universal spec","CO2 and glycol notices apply to OWIZ/OWEZ specifically — don't assume another case family in this pilot supports either without checking that model's own manual."]],
+ cites:[["OWIZ/OWEZ/OWIZV/OWEZV Installation & Operations Manual","P080658A V1.07 · p. iii"]]},
+
+{id:"scaleshelf",kw:["scale shelf","scale shelves","load a scale shelf","adjust the scale shelf"],
+ title:"Scale shelf installation and adjustment",
+ lede:"A scale shelf mounts to the mullion and needs to be leveled in two axes before it's trustworthy.",
+ pipe:["Resolved NLM/NLF service case","Matched scale shelf procedure"],
+ steps:[["Access the mounting point","Remove the screws and rear cover."],
+  ["Center it","Position the scale shelf centered on the mullion."],
+  ["Loosen the hardware","Loosen the wing nut and the two locking capscrews."],
+  ["Level it","Adjust front-to-rear and side-to-side, then retighten the wing nut and capscrews."],
+  ["Secure it","Drill pilot holes and install the mounting screws, then replace the rear cover."]],
+ kv:[["Mounting point","Mullion"],["Adjustment axes","Front-rear and side-side"]],
+ cites:[["NLM, NLF, NLD Installation & Service Manual","9043540 Rev. B · p. 24"]]},
+
+{id:"reardoors",kw:["rear door","sliding door","door won't stay","door track","rear sliding doors","door fell out"],
+ title:"Rear sliding doors won't stay in the track / removal",
+ lede:"The rear sliding doors on NLM/NLF/NLD and LLH come out and go back in the same way — the inner and outer doors are not interchangeable.",
+ pipe:["Resolved lift-glass service case","Matched rear door removal/installation procedure"],
+ steps:[["Slide the outer door to the right end",""],
+  ["Lift it into the upper track",""],
+  ["Tilt the bottom out and lower it out of the track",""],
+  ["Repeat for the inner door","Note the inner door has limiter stops and is not interchangeable with the outer door."],
+  ["Reverse the order to reinstall","Insert the inner door first."]],
+ kv:[["Door count","Inner + outer, not interchangeable"],["Inner door feature","Limiter stops"]],
+ notes:[["info","Cleaning note","Do not fully immerse the doors when cleaning."]],
+ cites:[["NLM, NLF, NLD Installation & Service Manual","9043540 Rev. B · p. 22"],["LLH Installation & Service Manual","9027531 Rev. C · p. 20"]]},
+
+{id:"nlmvariants",kw:["difference between nlm","nlf and nld","meat seafood deli","which case","nlm nlf nld"],
+ title:"What's the difference between NLM, NLF and NLD?",
+ lede:"Same lift curved-glass platform, three different coil types, setpoints and case-length runs.",
+ pipe:["Matched NLM/NLF/NLD model comparison in the Installation & Service Manual"],
+ steps:[["NLM — meat","Gravity coil, 6'/8'/12' lengths, setpoint 22°F, 10°F differential."],
+  ["NLF — seafood","Gravity coil, 4'/6'/8'/12' lengths, setpoint 33°F, 1°F differential."],
+  ["NLD — deli","Forced-air (blower) coil, 6'/8'/12' lengths, setpoint 24°F, 7°F differential. Also the only one of the three with a dedicated 120V case fan circuit and anti-sweat heaters."]],
+ kv:[["NLM setpoint / differential","22°F / 10°F"],["NLF setpoint / differential","33°F / 1°F"],["NLD setpoint / differential","24°F / 7°F"],["NLM capacity (6'/8'/12')","21.9 / 29.3 / 43.8 cu ft"]],
+ cites:[["NLM, NLF, NLD Installation & Service Manual","9043540 Rev. B · p. 3, 10–11, 29"],["Legacy Tyler Quick Reference (NLM sales sheet)","TY856"]]}
+];
+
+const OFFSCOPE = ["hussmann","kysor warren","kysor-warren","zero zone","true manufacturing","koolers","emerson","daikin","trane","copeland","traulsen","rdi"];
+
+const DOCPAGES = {
+  nlm:{tagline:"Lift-Front Curved Glass Meat Service Merchandiser",badge:"Case",
+    details:"NLM is a medium-temperature, lift-front curved-glass meat service merchandiser using gravity-coil refrigeration, available in 6', 8' and 12' lengths. It shares its platform with the NLF seafood case (33°F setpoint) and the NLD forced-air deli case (24°F setpoint, blower coil). Refrigerant type is not stated in the manual — it's specified on the unit nameplate.",
+    features:["Gravity-coil refrigeration with electronic thermostat control (P/N 5997588)","Setpoint 22°F, 10°F differential","Off-time defrost, 1 cycle/day, 110 min duration","22-1/2\" clear sliding rear doors, inner + outer, not interchangeable","Single row of T-8 canopy lights","Patented counter-weighted mechanical hinge lift glass"],
+    benefits:["Capacity: 21.9 / 29.3 / 43.8 cu ft at 6'/8'/12'","Serviceability: easily removable interior components for cleaning","Cleaning: pipe-leg base and removable kickplate facilitate cleaning underneath"],
+    resources:[["Installation & Service Manual","9043540 Rev. B"],["Legacy Tyler Quick Reference (Sales Sheet)","TY856"],["General Installation & Service Manual","9043544 Rev. C.1"]]},
+  llh:{tagline:"Lift-Front Curved Glass Hot Food/Deli Merchandiser",badge:"Case",
+    details:"LLH is a heated (not refrigerated) lift curved-glass hot food and deli merchandiser / steam table, available in 4', 6', 8' and 12' lengths. Certified to the CRMA health & sanitation standard CRS-S1-96 rather than ANSI/NSF 7.",
+    features:["Steam-table design — heat element, reservoir auto-fill, float auto-fill, 3-way valve","115V, 60Hz electrical (domestic)","Rheostat-type manual control, not a digital controller","Same lift-glass hinge and edge-seal hardware as the NLM/NLF/NLD platform"],
+    benefits:["Serviceability: shares its lift-glass hinge and edge-seal replacement procedure with NLM/NLF/NLD","Certified to CRMA health & sanitation standard CRS-S1-96"],
+    resources:[["Installation & Service Manual","9027531 Rev. C"]]},
+  owiz:{tagline:"Single-Deck Island Merchandiser — Open",badge:"Case",
+    details:"OWIZ is an open island merchandiser available across Frozen Food, Ice Cream and Medium Temp applications, in 8' and 12' lengths. Supports R-744 (CO₂) and glycol secondary refrigerant systems as documented installation options.",
+    features:["R-744 (CO₂) and glycol secondary refrigerant systems supported","CPC or Danfoss control system (per wiring diagram)","Clearvoyant LED lighting, standard or high-power","Suction line 7/8\", liquid line 3/8\"","1 defrost/day (frozen food), electric fail-safe 60 min / terminate 49°F"],
+    benefits:["Regulatory: natural refrigerant (CO₂) and glycol options","Serviceability: fan basket replaces in 2 steps, no plenum lift required","Merchandising: 10\"/12\"/14\"/16\" shelf width options"],
+    resources:[["Installation & Operations Manual","P080658A V1.07"],["General Installation & Service Manual","9043544 Rev. C.1"]]},
+  owez:{tagline:"Single-Deck Island Merchandiser — Solid/Glass Front",badge:"Case",
+    details:"OWEZ is the solid- or glass-front companion to OWIZ in the same island merchandiser family, offered across Frozen Food, Ice Cream and Medium Temp applications, documented in the same manual as OWIZ.",
+    features:["Solid front or glass front configurations, sliding doors optional","2 fans/case (vs. 4–6 on OWIZ) — lower fan load","R-744 (CO₂) and glycol secondary refrigerant systems supported","Suction line 7/8\", liquid line 3/8\""],
+    benefits:["Flexibility: solid or glass front on a common base","Merchandising: BTUH load is sized separately for solid vs. glass front"],
+    resources:[["Installation & Operations Manual","P080658A V1.07"]]},
+  pt:{tagline:"Self-Service Open Multi-Deck Merchandiser w/ Food Prep",badge:"Case",
+    details:"PT is a 39-1/2\" tall, 35\" deep remote self-service open multi-deck merchandiser with optional food-prep deli pans, in 4'/6'/8'/10'/12' lengths. The PT-RRS variant adds Refrigerated Rear Storage (35\"/53\" deep) with rear sliding doors. This is a technical reference sheet only — no installation/service procedures are published in it.",
+    features:["Clearvoyant 4 LED lighting, standard or high power, per light row","Superheat set point 10°F at the bulb, evaporator 24°F, discharge air 31°F","Timed-off defrost, 6 cycles/day, 20 min fail-safe","PT-RRS adds (4) 1/2 and (6) 1/4 size deli pans, 4\" deep, optional"],
+    benefits:["Merchandising: RRS variant adds dry or refrigerated rear storage with rear sliding doors","Engineered for stores at or below 75°F / 55% RH per ASHRAE-72-2005"],
+    resources:[["Technical Reference Sheet","PT/PT-RRS, 10/17"]]}
+};
+
+const PANE_META = {
+  chat:["Technical Inquiry","Ask about any Hillphoenix Case-line merchandiser, control or component"],
+  doc:["Product Documentation","Details, features and downloadable resources for the equipment in context"],
+  fleet:["Equipment Lookup","Resolve a nameplate to its product family before answering"],
+  library:["Document Library","Manuals, parts lists and bulletins available to the assistant"],
+  parts:["Parts & Diagrams","Exploded views and Hillphoenix part numbers"],
+  agent:["Agent Management","Retrieval scope, guardrails and model routing"],
+  users:["User Access","Who can ask what, and how deep the answers go"]
+};
+
+class Component extends DCLogic {
+  state = {
+    pane: "chat",
+    role: this.props.defaultRole || "service",
+    unitId: "nlm",
+    messages: [],
+    query: "",
+    fleetQ: "",
+    history: [],
+    toast: "",
+    guards: [true, true, true, false],
+    seq: 1
+  };
+
+  componentDidMount(){ this.greet(); }
+  componentWillUnmount(){ clearTimeout(this._t); clearTimeout(this._toast); }
+
+  unit(){ return EQUIP.find(e => e.id === this.state.unitId) || EQUIP[0]; }
+
+  toast(msg){
+    this.setState({toast: msg});
+    clearTimeout(this._toast);
+    this._toast = setTimeout(() => this.setState({toast: ""}), 2200);
+  }
+
+  go(pane){ this.setState({pane}); window.scrollTo(0, 0); }
+
+  greet(){
+    this.setState({messages: []});
+  }
+
+  ask(text){
+    const q = (text || "").trim();
+    if(!q) return;
+    const u = this.unit();
+    const base = this.state.seq;
+    const msgs = this.state.messages.concat([
+      {id: base, kind: "user", text: q},
+      {id: base + 1, kind: "thinking", text: "Searching " + u.family + " documentation…"}
+    ]);
+    const hist = [{q: q.length > 40 ? q.slice(0, 40) + "…" : q, model: u.model}].concat(this.state.history).slice(0, 6);
+    this.setState({messages: msgs, seq: base + 2, query: "", history: hist});
+    clearTimeout(this._t);
+    this._t = setTimeout(() => {
+      const answer = this.resolve(q);
+      const next = this.state.messages.map(m => m.id === base + 1 ? Object.assign({id: m.id}, answer) : m);
+      this.setState({messages: next}, () => this.scrollToMsg(base + 1));
+    }, 750);
+  }
+
+  scrollToMsg(id){
+    const el = document.getElementById("msg-" + id);
+    if(!el) return;
+    const bar = document.getElementById("topbar");
+    const offset = (bar ? bar.getBoundingClientRect().height : 0) + 16;
+    const top = window.scrollY + el.getBoundingClientRect().top - offset;
+    window.scrollTo({top: Math.max(0, top), behavior: "smooth"});
+  }
+
+  resolve(q){
+    const s = q.toLowerCase();
+    const u = this.unit();
+    const brand = OFFSCOPE.find(b => s.includes(b));
+    if(brand){
+      const B = brand.replace(/\b\w/g, c => c.toUpperCase());
+      return {kind:"answer", model:u.model,
+        title:"That equipment isn't in the Hillphoenix library",
+        lede:"You've asked about " + B + " equipment. This assistant answers only from Hillphoenix documentation and Hillphoenix-supplied components, so it will not guess at a procedure for another manufacturer's unit.",
+        pipe:["Searched the Hillphoenix Case-line document set","No matching equipment in the Hillphoenix library"],
+        steps:[], kv:[],
+        notes:[["stop","Why this matters","Refrigerant charge, defrost logic and control set points are not transferable between manufacturers. A plausible-sounding answer from the wrong manual is worse than no answer."],
+               ["info","What I can do","If a Hillphoenix case at this site has a " + B + " component fitted as a field replacement, give me the Hillphoenix model and I'll answer for everything on the Hillphoenix side of that interface."]],
+        cites:[], fig:null};
+    }
+    let best = null, bestScore = 0;
+    for(const a of ANSWERS){
+      let sc = 0;
+      for(const k of a.kw) if(s.includes(k)) sc += k.length > 7 ? 3 : 2;
+      if(sc > bestScore){ bestScore = sc; best = a; }
+    }
+    if(!best){
+      return {kind:"answer", model:u.model,
+        title:"Narrow it down for me",
+        lede:"I have the full document set for the " + u.model + " loaded, but that could point at several sections. Tell me what the equipment is actually doing, or start from one of the suggestions below the message box.",
+        pipe:["Resolved " + u.model + " — " + u.family, "No single section matched with confidence"],
+        steps:[], kv:[],
+        notes:[["info","Rather than guess","The assistant asks instead of picking the closest-looking procedure. A wrong procedure on a live case costs more than a follow-up question."]],
+        cites:[], fig:null};
+    }
+    return {kind:"answer", model:u.model, title:best.title, lede:best.lede, pipe:best.pipe || [],
+      steps:best.steps || [], kv:best.kv || [], notes:best.notes || [], cites:best.cites || [], fig:best.fig || null, img:best.img || []};
+  }
+
+  renderVals(){
+    const st = this.state;
+    const u = this.unit();
+    const meta = PANE_META[st.pane];
+    const nav = (id, label) => ({
+      id, label, go: () => this.go(id),
+      bg: st.pane === id ? "#223A2A" : "transparent",
+      mark: st.pane === id ? "inset 3px 0 0 #37B06B" : "none"
+    });
+    const [roleTitle, roleNote] = ROLE_FRAME[st.role];
+    const dp = DOCPAGES[u.id] || DOCPAGES.nlm;
+
+    const messages = st.messages.map(m => {
+      if(m.kind === "user") return {id: m.id, isUser: true, text: m.text, who: ROLE_LABEL[st.role]};
+      if(m.kind === "thinking") return {id: m.id, isThinking: true, text: m.text};
+      return {
+        id: m.id, isAnswer: true, model: m.model, title: m.title, lede: m.lede,
+        roleTitle, roleNote,
+        pipe: (m.pipe || []).map((t, i) => ({id: i, t})),
+        hasSteps: (m.steps || []).length > 0,
+        steps: (m.steps || []).map(([t, d], i) => ({id: i, n: i + 1, t, d})),
+        hasKv: (m.kv || []).length > 0,
+        kv: (m.kv || []).map(([k, v], i) => ({id: i, k, v})),
+        notes: (m.notes || []).map(([tone, t, d], i) => ({id: i, t, d, bg: (TONE[tone] || TONE.info).bg, bd: (TONE[tone] || TONE.info).bd})),
+        hasFig: !!m.fig, figcap: m.fig || "",
+        hasImg: !!(m.img && m.img.length), imgs: (m.img || []).map(([src, cap], i) => ({id: i, src, cap})),
+        cites: (m.cites || []).map(([doc, ref], i) => ({id: i, doc, ref, open: () => this.toast("Opening " + doc + " — " + ref)}))
+      };
+    });
+
+    const fq = st.fleetQ.toLowerCase();
+    const fleetList = EQUIP.filter(e => !fq || [e.model, e.family, e.line, e.tags.join(" ")].join(" ").toLowerCase().includes(fq)).map(e => ({
+      id: e.id, model: e.model, family: e.family, line: e.line, doc: e.doc,
+      tagList: e.tags.map((t, i) => ({id: i, t})),
+      pick: () => { this.setState({unitId: e.id, pane: "chat"}, () => { this.greet(); this.toast("Equipment in context: " + e.model); }); }
+    }));
+
+    const hasAsked = st.messages.length > 0;
+
+    return {
+      paneTitle: meta[0], paneSub: meta[1],
+      isChat: st.pane === "chat", isFleet: st.pane === "fleet", isLibrary: st.pane === "library",
+      isParts: st.pane === "parts", isAgent: st.pane === "agent", isUsers: st.pane === "users",
+      isDoc: st.pane === "doc",
+      hasAsked: hasAsked, showFaqHero: !hasAsked,
+      chatCols: hasAsked ? "minmax(0,1fr) 320px" : "minmax(0,1fr)",
+      roleNote: roleNote,
+      dp: dp,
+      hasDpPhoto: !!dp.hero, dpPhoto: dp.hero || "",
+      hasDpGallery: !!(dp.gallery && dp.gallery.length),
+      dpGallery: (dp.gallery || []).map(([src,cap],i)=>({id:i,src,cap})),
+      dpFeatures: dp.features.map((t,i)=>({id:i,t})),
+      dpBenefits: dp.benefits.map((t,i)=>({id:i,t})),
+      dpResources: dp.resources.map(([t,pn],i)=>({id:i,t,pn,open:()=>this.toast("Opening "+t+" — "+pn)})),
+      dpAsk: () => { this.setState({pane:"chat"}, () => this.greet()); },
+      navWork: [nav("chat","Technical Inquiry"), nav("doc","Product Documentation"), nav("fleet","Equipment Lookup"), nav("library","Document Library"), nav("parts","Parts & Diagrams")],
+      navAdmin: [nav("agent","Agent Management"), nav("users","User Access")],
+      history: st.history.map((h, i) => ({id: i, q: h.q, model: h.model, open: () => this.toast("Prototype — chat history is retained per user in the live build")})),
+      newInquiry: () => { this.setState({pane: "chat"}, () => this.greet()); },
+      roles: Object.keys(ROLE_LABEL).map(k => ({
+        id: k, label: ROLE_LABEL[k],
+        bg: st.role === k ? "#155C36" : "transparent",
+        fg: st.role === k ? "#ffffff" : "#5d7086",
+        fw: st.role === k ? "500" : "400",
+        pick: () => { this.setState({role: k}, () => { this.greet(); this.toast("Answering as: " + ROLE_LABEL[k]); }); }
+      })),
+      messages,
+      chips: (CHIPS[st.role] || []).map((t, i) => ({id: i, t, ask: () => this.ask(t)})),
+      query: st.query,
+      onQuery: (e) => this.setState({query: e.target.value}),
+      onKey: (e) => { if(e.key === "Enter" && !e.shiftKey){ e.preventDefault(); this.ask(this.state.query); } },
+      send: () => this.ask(this.state.query),
+      unit: u, unitId: st.unitId,
+      unitTags: u.tags.map((t, i) => ({id: i, t})),
+      unitStats: [{id:1,k:"Temp class",v:u.temp},{id:2,k:"Refrigerant",v:u.ref},{id:3,k:"Controls",v:u.ctrl},{id:4,k:"Primary doc",v:u.doc}],
+      equipment: EQUIP.map(e => ({id: e.id, optLabel: e.model + " — " + e.family})),
+      onUnit: (e) => { const id = e.target.value; this.setState({unitId: id}, () => this.greet()); },
+      fleetQ: st.fleetQ,
+      onFleetQ: (e) => this.setState({fleetQ: e.target.value}),
+      fleetList,
+      docs: DOCS.map(([title, covers, pn, pages, status, thumb], i) => ({
+        id: i, title, covers, pn, pages, status,
+        hasThumb: !!thumb, thumb: thumb || "",
+        bg: status === "Indexed" ? "#e6f4ed" : "#fdf4e3",
+        fg: status === "Indexed" ? "#11704a" : "#8a5a00"
+      })),
+      partsRows: [
+        {id:1,ref:"1",name:"Electronic thermostat",pn:"5997588",note:"All NLM/NLF/NLD case sizes"},
+        {id:2,ref:"2",name:"Fan motor (NLD)",pn:"5125532",note:"Domestic 115V — export 220V: 5126572"},
+        {id:3,ref:"3",name:"Suction solenoid valve",pn:"5191445",note:"Domestic — export: 5231619"},
+        {id:4,ref:"4",name:"NSF product thermometer",pn:"5967100",note:"All case sizes"},
+        {id:5,ref:"5",name:"Glass edge seal (lift glass)",pn:"5246375",note:"Torque setscrews to 145 lb-in (NLM/NLF/NLD) or 150 lb-in (LLH)"},
+        {id:6,ref:"6",name:"T-8 canopy lamp ballast, 1-row",pn:"5991029 / 5991030",note:"Domestic — export: 9322286 / 9322287"}
+      ],
+      partsFigs: [],
+      pipeline: [
+        {id:1,n:1,t:"Resolve the equipment",d:"Nameplate, serial or asset tag becomes a product family, temperature class and refrigerant before any search runs.",accent:"#155C36"},
+        {id:2,n:2,t:"Search only that family's documents",d:"Hybrid keyword + semantic retrieval across the Hillphoenix library, scoped to the resolved family and its components.",accent:"#1E7A46"},
+        {id:3,n:3,t:"Compose the procedure",d:"Steps, tools, set points, part numbers and the figure that matches — assembled in the order a tech would work it.",accent:"#37B06B"},
+        {id:4,n:4,t:"Inject safety and role framing",d:"Lock-out/tag-out, refrigerant handling and the line between store-staff work and technician work.",accent:"#C98A2B"},
+        {id:5,n:5,t:"Guardrail check",d:"Not in the Hillphoenix manuals? The assistant says so and escalates. It never fills the gap with another manufacturer's procedure.",accent:"#b7791f"}
+      ],
+      guardrails: [
+        {id:0,on:st.guards[0],t:"Hillphoenix sources only",d:"Refuse and say so when the manuals don't cover it. No general-web inference inside the answer body.",toggle:()=>this.toggleGuard(0)},
+        {id:1,on:st.guards[1],t:"Cite page-level or don't answer",d:"Every claim carries a document P/N and page reference.",toggle:()=>this.toggleGuard(1)},
+        {id:2,on:st.guards[2],t:"Safety interlock language",d:"LOTO and refrigerant handling warnings are injected, never optional.",toggle:()=>this.toggleGuard(2)},
+        {id:3,on:st.guards[3],t:"Supplemental web research",d:"Shown in a separate, clearly labeled block — off by default for customer-facing use.",toggle:()=>this.toggleGuard(3)}
+      ],
+      routing: [
+        {id:1,k:"Primary answer engine",v:"Claude"},{id:2,k:"Standby engine",v:"Gemini"},
+        {id:3,k:"Embeddings",v:"Hybrid keyword + semantic"},{id:4,k:"Figure extraction",v:"Vision pass on ingest"},
+        {id:5,k:"Median first token",v:"1.4 s"},{id:6,k:"Answers with citations",v:"100%"}
+      ],
+      users: [
+        {id:1,name:"M. Alvarez",org:"Hillphoenix Technical Services — Inside Service Support",role:"Service Tech",scope:"Full service + parts",last:"4 min ago"},
+        {id:2,name:"D. Okafor",org:"Contract installer",role:"Installer",scope:"I&O manuals, start-up",last:"1 hr ago"},
+        {id:3,name:"J. Whitfield",org:"Kroger — Facilities Engineering",role:"Store Engineer",scope:"Operation, alarms, energy",last:"Yesterday"},
+        {id:4,name:"S. Bhatt",org:"Publix — Store Ops",role:"Customer",scope:"Operation & care only",last:"2 days ago"},
+        {id:5,name:"Kiosk — Learning Center",org:"Hillphoenix Learning Center, Conyers GA",role:"Shared device",scope:"Training & knowledge base",last:"3 days ago"}
+      ],
+      actSendPhone: () => this.toast("Sent to your phone"),
+      actOrder: () => this.toast("Opening Parts Town for this part number"),
+      actEscalate: () => this.toast("Escalated to Hillphoenix Technical Services (833-280-5714 / Case queue) with the full transcript"),
+      actHelpful: () => this.toast("Marked helpful — logged for the documentation team"),
+      actUpload: () => this.toast("Prototype — in the live build the PDF is chunked and searchable in minutes"),
+      actStock: () => this.toast("Checking Parts One Store for local availability…"),
+      actExploded: () => this.toast("Opening the Operational Parts List — 9043540 Rev. B, p. 29"),
+      actInvite: () => this.toast("Invite scoped to a role"),
+      actSso: () => this.toast("Mapping retailer IdP groups to assistant roles"),
+      actExport: () => this.toast("Usage export queued"),
+      hasToast: !!st.toast, toast: st.toast
+    };
+  }
+
+  toggleGuard(i){
+    const g = this.state.guards.slice();
+    g[i] = !g[i];
+    this.setState({guards: g});
+    this.toast(g[i] ? "Guardrail enabled" : "Guardrail disabled — prototype only");
+  }
+}
+
+</script>
+</body>
+</html>
