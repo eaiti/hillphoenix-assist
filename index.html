@@ -450,7 +450,7 @@
                       <sc-if value="{{ d.hasThumb }}">
                         <img src="{{ d.thumb }}" alt="" style="flex:0 0 46px;width:46px;height:52px;object-fit:contain;background:#f5f8fb;border:1px solid #dde5ee;border-radius:4px;padding:3px" />
                       </sc-if>
-                      <span>{{ d.title }}</span>
+                      <a href="{{ d.url }}" target="_blank" rel="noopener">{{ d.title }}</a>
                     </span>
                   </td>
                   <td style="padding:10px 14px;border-bottom:1px solid #eef3f8;color:#5d7086">{{ d.covers }}</td>
@@ -604,12 +604,12 @@ const EQUIP = [
 ];
 
 const DOCS = [
-  ["General Installation & Service Manual (UL/NSF)","All legacy Tyler case models — used with the case-specific manual","9043544 Rev. C.1",33,"Indexed"],
-  ["NLM, NLF, NLD — Lift Front Curved Glass Meat/Seafood/Deli Service Merchandisers — Installation & Service Manual","NLM / NLF / NLD","9043540 Rev. B",31,"Indexed"],
-  ["LLH — Lift Front Curved Glass Hot Food/Deli Merchandisers — Installation & Service Manual","LLH","9027531 Rev. C",28,"Indexed"],
-  ["OWIZ/OWEZ/OWIZV/OWEZV Single-Deck Island Merchandiser — Installation & Operations Manual","OWIZ / OWEZ / OWIZV / OWEZV","P080658A V1.07",44,"Indexed"],
-  ["PT / PT-RRS Self-Service Open Multi-Deck Merchandiser — Technical Reference Sheet","PT / PT-RRS","PT-Tech-Ref 10/17",3,"Indexed"],
-  ["NLM Lift Curved Glass — Meat Service Merchandiser (Legacy Tyler Quick Reference)","NLM","TY856",1,"Indexed"]
+  ["General Installation & Service Manual (UL/NSF)","All legacy Tyler case models — used with the case-specific manual","9043544 Rev. C.1",33,"Indexed","docs/General-Installation-and-Service.pdf"],
+  ["NLM, NLF, NLD — Lift Front Curved Glass Meat/Seafood/Deli Service Merchandisers — Installation & Service Manual","NLM / NLF / NLD","9043540 Rev. B",31,"Indexed","docs/NLM-2.pdf"],
+  ["LLH — Lift Front Curved Glass Hot Food/Deli Merchandisers — Installation & Service Manual","LLH","9027531 Rev. C",28,"Indexed","docs/LLH.pdf"],
+  ["OWIZ/OWEZ/OWIZV/OWEZV Single-Deck Island Merchandiser — Installation & Operations Manual","OWIZ / OWEZ / OWIZV / OWEZV","P080658A V1.07",44,"Indexed","docs/OWIZ-OWEZ-OWIZV-OWEZV-display-case-i-o-manual-P080658A.pdf"],
+  ["PT / PT-RRS Self-Service Open Multi-Deck Merchandiser — Technical Reference Sheet","PT / PT-RRS","PT-Tech-Ref 10/17",3,"Indexed","docs/PT-R-display-case-tech-reference-sheet-39.5-35.pdf"],
+  ["NLM Lift Curved Glass — Meat Service Merchandiser (Legacy Tyler Quick Reference)","NLM","TY856",1,"Indexed","docs/NLM-Meat-lift-curved-glass-service.pdf"]
 ];
 
 const CHIPS = {
@@ -986,9 +986,8 @@ class Component extends DCLogic {
       fleetQ: st.fleetQ,
       onFleetQ: (e) => this.setState({fleetQ: e.target.value}),
       fleetList,
-      docs: DOCS.map(([title, covers, pn, pages, status, thumb], i) => ({
-        id: i, title, covers, pn, pages, status,
-        hasThumb: !!thumb, thumb: thumb || "",
+      docs: DOCS.map(([title, covers, pn, pages, status, url], i) => ({
+        id: i, title, covers, pn, pages, status, url,
         bg: status === "Indexed" ? "#e6f4ed" : "#fdf4e3",
         fg: status === "Indexed" ? "#11704a" : "#8a5a00"
       })),
